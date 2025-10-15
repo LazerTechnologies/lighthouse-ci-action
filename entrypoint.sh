@@ -165,7 +165,9 @@ if [[ -n "${SHOP_PULL_THEME+x}" ]]; then
 fi
 
 theme_push_log="$(mktemp)"
+mv ".shopifyignore" ".shopifyignore.tmp"
 shopify theme push --development --json --path $theme_root > "$theme_push_log" && cat "$theme_push_log"
+mv ".shopifyignore.tmp" ".shopifyignore"
 preview_url="$(cat "$theme_push_log" | jq -r '.theme.preview_url')"
 preview_id="$(cat "$theme_push_log" | jq -r '.theme.id')"
 
