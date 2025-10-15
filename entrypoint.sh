@@ -11,6 +11,7 @@
 #
 # Here, we're translating the GitHub action input arguments into environment variables
 # for this script to use.
+
 [[ -n "$INPUT_STORE" ]]             && export SHOP_STORE="$INPUT_STORE"
 [[ -n "$INPUT_PASSWORD" ]]          && export SHOP_PASSWORD="$INPUT_PASSWORD"
 [[ -n "$INPUT_PRODUCT_HANDLE" ]]    && export SHOP_PRODUCT_HANDLE="$INPUT_PRODUCT_HANDLE"
@@ -20,10 +21,6 @@
 
 # Authentication creds
 export SHOP_ACCESS_TOKEN="$INPUT_ACCESS_TOKEN"
-
-# Authentication creds (deprecated)
-[[ -n "$INPUT_APP_ID" ]]               && export SHOP_APP_ID="$INPUT_APP_ID"
-[[ -n "$INPUT_APP_PASSWORD" ]]         && export SHOP_APP_PASSWORD="$INPUT_APP_PASSWORD"
 
 # Optional, these are used by Lighthouse CI to add pass/fail checks on
 # the GitHub Pull Request.
@@ -63,14 +60,7 @@ api_request() {
   if [[ -n "$SHOP_ACCESS_TOKEN" ]]; then
     curl -sS -f -X GET \
       "$url" \
-      -H "X-Shopify-Access-Token: ${SHOP_ACCESS_TOKEN}" \
-      1> "$out" \
-      2> "$err"
-  else
-    local username="$SHOP_APP_ID"
-    local password="$SHOP_APP_PASSWORD"
-    curl -sS -f -X GET \
-      -u "$username:$password" "$url" \
+      -H "X-Shopify-Access-Token: ${$SHOP_ACCESS_TOKEN}" \
       1> "$out" \
       2> "$err"
   fi
@@ -127,12 +117,10 @@ export SHOPIFY_SHOP="${SHOP_STORE#*(https://|http://)}"
 
 if [[ -n "$SHOP_ACCESS_TOKEN" ]]; then
   export SHOPIFY_PASSWORD="$SHOP_ACCESS_TOKEN"
-else
-  export SHOPIFY_PASSWORD="$SHOP_APP_PASSWORD"
 fi
 
 export SHOPIFY_FLAG_STORE="$SHOPIFY_SHOP"
-export SHOPIFY_CLI_THEME_TOKEN="$SHOPIFY_PASSWORD"
+export SHOPIFY_CLI_THEME_TOKEN="$SHOP_ACCESS_TOKEN"
 export SHOPIFY_CLI_TTY=0
 # shopify auth login
 
