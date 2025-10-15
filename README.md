@@ -24,9 +24,11 @@ jobs:
         uses: shopify/lighthouse-ci-action@v1
         with:
           store: ${{ secrets.SHOP_STORE }}
-          access_token: ${{ secrets.SHOP_ACCESS_TOKEN }}
+          password: ${{ secrets.SHOP_PASSWORD }}
+          app_client_id: ${{ secrets.APP_CLIENT_ID }}
+          app_secret: ${{ secrets.APP_SECRET }}
           lhci_github_app_token: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}
-          lhci_min_score_performance: 0.9
+          lhci_min_score_performance: 0.6
           lhci_min_score_accessibility: 0.9
 ```
 
@@ -43,14 +45,16 @@ Authentication is done with [Custom App access tokens](https://shopify.dev/apps/
 5. From the `API credentials` tab, install the app.
 6. Take note of the `Admin API access token`.
 7. Add the following to your repository's [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository):
-   - `SHOP_ACCESS_TOKEN`: the Admin API access token
    - `SHOP_STORE`: Shopify store `<store>.myshopify.com` URL
+   - `APP_CLIENT_ID`: the client ID for your private app
+   - `APP_SECRET`: the secret for your private app
 
 ## Configuration
 
 The `shopify/lighthouse-ci-action` accepts the following arguments:
 
-* `access_token` - (required) see [Authentication](#authentication)
+* `app_client_id` - (required) see [Authentication](#authentication)
+* `app_secret` - (required) see [Authentication](#authentication)
 * `store` - (required) Shopify store Admin URL, e.g. `my-store.myshopify.com`.
 * `password` - (optional) For password protected shops
 * `product_handle` - (optional) Product handle to run the product page Lighthouse run on. Defaults to the first product.

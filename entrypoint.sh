@@ -20,7 +20,8 @@
 [[ -n "$INPUT_PULL_THEME" ]]        && export SHOP_PULL_THEME="$INPUT_PULL_THEME"
 
 # Authentication creds
-export SHOP_ACCESS_TOKEN="$INPUT_ACCESS_TOKEN"
+export SHOP_APP_CLIENT_ID="$INPUT_APP_CLIENT_ID"
+export SHOP_APP_SECRET="$INPUT_APP_SECRET"
 
 # Optional, these are used by Lighthouse CI to add pass/fail checks on
 # the GitHub Pull Request.
@@ -51,6 +52,20 @@ step() {
 	EOF
 }
 
+auth_token() {
+  local out="$(mktemp)"
+
+  curl -X POST \
+    "https://${SHOP_STORE}/admin/oauth/access_token" \
+    -H "Content-Type: application/x-www-form-urlencoded" \
+    -d "grant_type=client_credentials" \
+    -d "client_id=${SHOP_APP_CLIENT_ID}" \
+    -d "client_secret=${SHOP_APP_SECRET}"
+    1> "$out" \
+
+  cat "$out"
+}
+
 api_request() {
   local url="$1"
   local err="$(mktemp)"
@@ -60,7 +75,7 @@ api_request() {
   if [[ -n "$SHOP_ACCESS_TOKEN" ]]; then
     curl -sS -f -X GET \
       "$url" \
-      -H "X-Shopify-Access-Token: ${$SHOP_ACCESS_TOKEN}" \
+      -H "X-Shopify-Access-Token: ${SHOP_ACCESS_TOKEN}" \
       1> "$out" \
       2> "$err"
   fi
@@ -114,6 +129,11 @@ YAML
 # Secret environment variable that turns shopify CLI into CI mode that accepts environment credentials
 export CI=1
 export SHOPIFY_SHOP="${SHOP_STORE#*(https://|http://)}"
+
+log "Fetching access token"
+access_token_response="$(auth_token)"
+access_token="$(echo "$access_token_response" | jq -r '.access_token')"
+export SHOP_ACCESS_TOKEN="$access_token"
 
 if [[ -n "$SHOP_ACCESS_TOKEN" ]]; then
   export SHOPIFY_PASSWORD="$SHOP_ACCESS_TOKEN"

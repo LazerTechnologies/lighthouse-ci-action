@@ -5,11 +5,12 @@ branding:
   colour: green
 description: 'Run Lighthouse CI on Shopify themes directly from GitHub'
 inputs:
-  access_token:
-    description: 'Custom app access token'
-    # required: false because you can still authenticate with private
-    # app credentials
-    required: false
+  app_client_id:
+    description: 'Custom app client ID'
+    required: true
+  app_secret:
+    description: 'Custom app secret'
+    required: true
   store:
     description: '<domain>.myshopify.com URL'
     required: true
