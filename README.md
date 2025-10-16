@@ -1,4 +1,4 @@
-# shopify/lighthouse-ci-action
+# lazertechnologies/lighthouse-ci-action
 
 [About this repo](#about-this-repo) | [Usage](#usage) | [Authentication](#authentication) | [Configuration](#configuration)
 
@@ -8,7 +8,7 @@
 
 ## Usage
 
-Add `shopify/lighthouse-ci-action` to the workflow of your Shopify theme.
+Add `lazertechnologies/lighthouse-ci-action` to the workflow of your Shopify theme.
 
 ```yml
 # .github/workflows/lighthouse-ci.yml
@@ -21,7 +21,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Lighthouse
-        uses: shopify/lighthouse-ci-action@v1
+        uses: lazertechnologies/lighthouse-ci-action@v1.2.3
         with:
           store: ${{ secrets.SHOP_STORE }}
           password: ${{ secrets.SHOP_PASSWORD }}
@@ -34,24 +34,22 @@ jobs:
 
 ## Authentication
 
-Authentication is done with [Custom App access tokens](https://shopify.dev/apps/auth/admin-app-access-tokens).
+Authentication is done with [Client credentials grant](https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/client-credentials-grant).
 
-1. [Create the app](https://help.shopify.com/en/manual/apps/custom-apps#create-and-install-a-custom-app).
-2. Click the `Configure Admin API Scopes` button.
-3. Enable the following scopes:
+1. [Create the app on your dev dashboard](https://shopify.dev/docs/apps/build/dev-dashboard).
+2. Enable the following Admin API scopes:
    - `read_products`
    - `write_themes`
-4. Click `Save`.
-5. From the `API credentials` tab, install the app.
-6. Take note of the `Admin API access token`.
-7. Add the following to your repository's [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository):
+3. Install the app on the development store created for Lighthouse testing.
+4. Take note of the `Client ID` and `Secret`.
+5. Add the following to your repository's [GitHub Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets#creating-encrypted-secrets-for-a-repository):
    - `SHOP_STORE`: Shopify store `<store>.myshopify.com` URL
    - `APP_CLIENT_ID`: the client ID for your private app
    - `APP_SECRET`: the secret for your private app
 
 ## Configuration
 
-The `shopify/lighthouse-ci-action` accepts the following arguments:
+The `lazertechnologies/lighthouse-ci-action` accepts the following arguments:
 
 * `app_client_id` - (required) see [Authentication](#authentication)
 * `app_secret` - (required) see [Authentication](#authentication)
